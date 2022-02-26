@@ -1,11 +1,13 @@
 package com.xjc.payment.service;
 
 import com.github.wxpay.sdk.WXPay;
+import com.github.wxpay.sdk.WXPayConstants;
+import com.github.wxpay.sdk.WXPayUtil;
 import com.xjc.payment.bean.*;
 import com.xjc.payment.config.PayConfig;
 import com.xjc.payment.result.*;
 import com.xjc.payment.utils.HttpUtil;
-import com.xjc.payment.utils.XmlUtil;
+import com.xjc.payment.utils.ParameUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +22,7 @@ import java.util.Map;
  */
 public class WXPaymentService {
 
-    private static Logger logger = LoggerFactory.getLogger(WXPaymentService.class);
+    public static final Logger logger = LoggerFactory.getLogger(WXPaymentService.class);
 
     /**
      * 统一下单
@@ -176,5 +178,58 @@ public class WXPaymentService {
         return result.success(wxRefundQueryVo);
     }
 
+    /**
+     * 退款回调处理
+     *
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    public Result<String> refundOrderNotify(HttpServletRequest request) throws Exception {
+        Result<String> result = new Result<>();
+        PayConfig payConfig = new PayConfig();
+        String returnXmlMessage;
+
+        try {
+            String readData = HttpUtil.readData(request);
+            Map<String, String> refundOrderNotifyMap = WXPayUtil.xmlToMap(readData);
+            String returnCode = refundOrderNotifyMap.get("return_code");
+            String returnMsg = refundOrderNotifyMap.get("return_msg");
+            if (!"SUCCESS".equals(returnCode) || !"OK".equals(returnMsg)) {
+                returnXmlMessage = setReturnXml(WXPayConstants.FAIL, "return_code不为success");
+                result.setData(returnXmlMessage);
+                return result.fail();
+            }
+
+            String reqInfo = refundOrderNotifyMap.get("req_info");
+            String refundDecrypt = ParameUtil.getRefundDecrypt(reqInfo, payConfig.getKey());
+            Map<String, String> toMap = WXPayUtil.xmlToMap(refundDecrypt);
+
+            returnXmlMessage = setReturnXml(WXPayConstants.SUCCESS, "OK");
+            result.setData(returnXmlMessage);
+            result.success();
+
+            logger.info("[refundAsyncNotify]  [out_trade_no:{}] [out_refund_no:{}] [退款异步消息处理成功:{}]",
+                    toMap.get("out_trade_no"), toMap.get("out_refund_no"), returnXmlMessage);
+
+        } catch (Exception e) {
+            returnXmlMessage = setReturnXml(WXPayConstants.FAIL, e.getMessage());
+            result.setData(returnXmlMessage);
+            result.fail();
+        }
+
+        return result;
+    }
+
+    /**
+     * 设置返回给微信服务器的xml信息
+     *
+     * @param returnCode
+     * @param returnMsg
+     * @return
+     */
+    private String setReturnXml(String returnCode, String returnMsg) {
+        return "<xml><return_code><![CDATA[" + returnCode + "]]></return_code><return_msg><![CDATA[" + returnMsg + "]]></return_msg></xml>";
+    }
 
 }

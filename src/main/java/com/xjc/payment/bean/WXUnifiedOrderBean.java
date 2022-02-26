@@ -1,5 +1,7 @@
 package com.xjc.payment.bean;
 
+import com.xjc.payment.enums.TradeTypeEnum;
+
 import java.io.Serializable;
 
 /**
@@ -31,6 +33,7 @@ public class WXUnifiedOrderBean implements Serializable {
     private String notifyUrl;
     /**
      * 交易类型
+     * @see TradeTypeEnum
      */
     private String tradeType;
     /**
