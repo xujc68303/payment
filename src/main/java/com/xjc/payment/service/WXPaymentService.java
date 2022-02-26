@@ -185,12 +185,14 @@ public class WXPaymentService {
      * @return
      * @throws Exception
      */
-    public Result<String> refundOrderNotify(HttpServletRequest request) throws Exception {
+    public Result<String> refundOrderNotify(HttpServletRequest request) {
         Result<String> result = new Result<>();
-        PayConfig payConfig = new PayConfig();
+
         String returnXmlMessage;
 
         try {
+            PayConfig payConfig = new PayConfig();
+
             String readData = HttpUtil.readData(request);
             Map<String, String> refundOrderNotifyMap = WXPayUtil.xmlToMap(readData);
             String returnCode = refundOrderNotifyMap.get("return_code");
