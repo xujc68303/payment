@@ -3,6 +3,7 @@ package com.xjc.payment.bean;
 import com.xjc.payment.enums.TradeTypeEnum;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * @Author jiachenxu
@@ -22,7 +23,7 @@ public class WXUnifiedOrderBean implements Serializable {
     /**
      * 标价金额(单位为分)
      */
-    private Integer totalFee;
+    private BigDecimal totalFee;
     /**
      * 终端IP
      */
@@ -61,11 +62,11 @@ public class WXUnifiedOrderBean implements Serializable {
         this.outTradeNo = outTradeNo;
     }
 
-    public Integer getTotalFee() {
+    public BigDecimal getTotalFee() {
         return totalFee;
     }
 
-    public void setTotalFee(Integer totalFee) {
+    public void setTotalFee(BigDecimal totalFee) {
         this.totalFee = totalFee;
     }
 

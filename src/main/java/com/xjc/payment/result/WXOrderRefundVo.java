@@ -1,6 +1,7 @@
 package com.xjc.payment.result;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * @Author jiachenxu
@@ -24,7 +25,7 @@ public class WXOrderRefundVo implements Serializable {
     /**
      * 退款金额
      */
-    private String refundFee;
+    private BigDecimal refundFee;
 
     public String getOutTradeNo() {
         return outTradeNo;
@@ -50,11 +51,11 @@ public class WXOrderRefundVo implements Serializable {
         this.refundId = refundId;
     }
 
-    public String getRefundFee() {
+    public BigDecimal getRefundFee() {
         return refundFee;
     }
 
-    public void setRefundFee(String refundFee) {
+    public void setRefundFee(BigDecimal refundFee) {
         this.refundFee = refundFee;
     }
 }
