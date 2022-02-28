@@ -11,6 +11,8 @@ import java.math.BigDecimal;
 import java.security.Security;
 import java.util.Base64;
 
+import static java.math.BigDecimal.ROUND_HALF_UP;
+
 /**
  * @Author jiachenxu
  * @Date 2022/2/26
@@ -36,12 +38,11 @@ public class ParameUtil {
     }
 
     public static Integer covertFee(BigDecimal param) {
-        return (int) Double.parseDouble(param.toString()) * 100;
+        return param.multiply(new BigDecimal("100")).intValue();
     }
 
-
     public static BigDecimal covertFee(Integer param) {
-        return new BigDecimal(String.valueOf(Double.parseDouble(param.toString()) / 100));
+        return new BigDecimal(String.valueOf(Double.parseDouble(param.toString()) / 100)).setScale(2, ROUND_HALF_UP);
     }
 
     /**
